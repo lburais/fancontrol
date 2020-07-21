@@ -56,6 +56,7 @@ void ReadDataFromFile(const char* fname, char *data, int size){
 
 void EnablePWM()
 {
+        fprintf(stderr, "  Enable PWM\n");
 	if (!isFanDeviceAvailable()){
 		WriteDataToFile((char *)PWM0GENERATOR,"0",1);
 	}
@@ -78,6 +79,7 @@ int GetCpuTemp(){
 void SetFanLow(){
 	if (currentFanLevel != 1)
 	{
+	        fprintf(stderr, "  Set Fan Low\n");
 		snprintf(buf, sizeof(buf), "%s/%s", PWM0,DUTY_CYCLE);
 		WriteDataToFile(buf,"3000000",7);
 		currentFanLevel = 1;
@@ -87,6 +89,7 @@ void SetFanLow(){
 void SetFanMed(){
 	if (currentFanLevel != 2)
 	{
+	        fprintf(stderr, "  Set Fan Med\n");
 		snprintf(buf, sizeof(buf), "%s/%s", PWM0,DUTY_CYCLE);
 		WriteDataToFile(buf,"6000000",7);
 		currentFanLevel = 2;
@@ -96,6 +99,7 @@ void SetFanMed(){
 void SetFanHigh(){
 	if (currentFanLevel != 3)
 	{
+        	fprintf(stderr, "  Set Fan High\n");
 		snprintf(buf, sizeof(buf), "%s/%s", PWM0,DUTY_CYCLE);
 		WriteDataToFile(buf,"9000000",7);
 		currentFanLevel = 2;
@@ -103,11 +107,13 @@ void SetFanHigh(){
 }
 
 void SetFanOn(){
+        fprintf(stderr, "  Set Fan On\n");
 	snprintf(buf, sizeof(buf), "%s/%s", PWM0,ENABLE);
 	WriteDataToFile(buf,"1",1);
 }
 
 void SetFanOff(){
+        fprintf(stderr, "  Set Fan Off\n");
 	snprintf(buf, sizeof(buf), "%s/%s", PWM0,ENABLE);
 	WriteDataToFile(buf,"0",1);
 	currentFanLevel = 0;
@@ -125,7 +131,8 @@ void Loop(){
 	int tmp;
 	while (1==1){
 		tmp = GetCpuTemp();
-		if (tmp < 60)
+		fprintf(stderr, "  Temp is %d°\n", tmp);
+		if (tmp < 40)
 			SetFanOff();
 		else{
 			SetFanOn();
@@ -145,6 +152,7 @@ void Loop(){
 
 int main(int argc, char **argv)
 {
+        fprintf(stderr, "Fan Control\n");
 	EnablePWM();
 	if (isFanDeviceAvailable()){
 		if (isFanRunning())
